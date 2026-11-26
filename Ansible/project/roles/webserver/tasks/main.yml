@@ -1,0 +1,22 @@
+---
+# Installs nginx and deploys a templated homepage.
+# Demonstrates: apt, template, service modules + handler notification.
+
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Deploy custom homepage
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    mode: '0644'
+  notify: Restart nginx              # HANDLER fires only if the file changes
+
+- name: Ensure nginx is running and enabled at boot
+  service:
+    name: nginx
+    state: started
+    enabled: true

@@ -1,0 +1,20 @@
+# Managed by Ansible — nginx reverse proxy (round-robin).
+# The upstream block is built by LOOPING over every host in the
+# tag_role_web group and reading each one's ansible_host (its IP).
+
+upstream web_backend {
+{% for host in groups['tag_role_web'] %}
+    server {{ hostvars[host]['ansible_host'] | default(hostvars[host]['ansible_default_ipv4']['address']) }}:80;
+{% endfor %}
+}
+
+server {
+    listen 80 default_server;
+    server_name _;
+
+    location / {
+        proxy_pass http://web_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}

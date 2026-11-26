@@ -1,0 +1,12 @@
+---
+# Fallback values if not supplied via group_vars.
+common_packages:
+  - curl
+  - vim
+
+extra_users: []
+
+# Safe placeholder secrets (real ones come from the vault file)
+app_admin_user: "appadmin"
+app_admin_password: "changeme"
+api_key: "none"

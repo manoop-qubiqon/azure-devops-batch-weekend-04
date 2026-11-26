@@ -1,0 +1,43 @@
+---
+# Baseline setup applied to every server.
+# Demonstrates: apt module, loops, conditionals (when), facts, template, file.
+
+- name: Update apt cache (Debian/Ubuntu only)
+  apt:
+    update_cache: true
+    cache_valid_time: 3600
+  when: ansible_facts['os_family'] == "Debian"     # CONDITIONAL on a fact
+
+- name: Install common packages
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ common_packages }}"                     # LOOP over a list var
+
+- name: Create extra users
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ item.group }}"
+    shell: /bin/bash
+    state: present
+  loop: "{{ extra_users }}"                         # LOOP over dicts
+
+- name: Ensure app config directory exists
+  file:
+    path: /etc/demoapp
+    state: directory
+    mode: '0750'
+
+# Uses a VAULT-encrypted variable (app_admin_password) at runtime
+- name: Write app config from vault secrets
+  template:
+    src: appconfig.j2
+    dest: /etc/demoapp/config.ini
+    mode: '0640'
+
+- name: Show gathered facts (debug)
+  debug:
+    msg: >
+      Host {{ ansible_hostname }} is {{ ansible_facts['distribution'] }}
+      {{ ansible_facts['distribution_version'] }} with
+      {{ ansible_processor_vcpus }} vCPU(s).

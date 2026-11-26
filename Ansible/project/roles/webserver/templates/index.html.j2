@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head><title>{{ ansible_hostname }}</title></head>
+<body style="font-family: sans-serif; text-align: center; margin-top: 4rem;">
+  <h1>Hello from Ansible 🚀</h1>
+  <p>Served by host: <strong>{{ ansible_hostname }}</strong></p>
+  <p>Private IP: {{ ansible_default_ipv4.address }}</p>
+  <p>OS: {{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}</p>
+  <p>Environment: {{ env | default('dev') }}</p>
+</body>
+</html>

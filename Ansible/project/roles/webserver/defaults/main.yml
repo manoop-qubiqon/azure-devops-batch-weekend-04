@@ -1,0 +1,4 @@
+---
+# Overridable defaults for the webserver role.
+env: dev
+http_port: 80

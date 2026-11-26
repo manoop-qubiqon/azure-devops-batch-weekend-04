@@ -1,0 +1,18 @@
+---
+# Variables available to every host in every play.
+
+# Base packages installed on all servers by the 'common' role (LOOP demo)
+common_packages:
+  - curl
+  - vim
+  - htop
+  - git
+  - net-tools
+
+# Extra users to create (LOOP over dictionaries demo)
+extra_users:
+  - { name: "deploy", group: "sudo" }
+  - { name: "monitor", group: "adm" }
+
+# Web tier defaults (can be overridden per role)
+http_port: 80

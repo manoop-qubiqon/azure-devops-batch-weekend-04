@@ -1,0 +1,4 @@
+---
+# The loadbalancer role reads web node IPs from the tag_role_web
+# inventory group, so it needs no hardcoded backend list here.
+lb_listen_port: 80

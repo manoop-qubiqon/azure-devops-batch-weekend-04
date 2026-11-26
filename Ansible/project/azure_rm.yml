@@ -1,0 +1,31 @@
+# Azure dynamic inventory.
+# File MUST end in azure_rm.yml for the plugin to load it.
+# Run `ansible-inventory -i azure_rm.yml --graph` to test.
+
+plugin: azure.azcollection.azure_rm
+
+# Authenticate using `az login` credentials
+auth_source: cli
+
+# Restrict discovery to our demo resource group
+include_vm_resource_groups:
+  - ansible-demo-rg
+
+# SSH to the VM's public IP
+hostvar_expressions:
+  ansible_host: public_ipv4_addresses[0]
+
+# Turn Azure tags into Ansible groups.
+# A VM tagged role=web becomes group "tag_role_web".
+keyed_groups:
+  - prefix: tag
+    key: tags
+  - prefix: rg
+    key: resource_group
+
+# Only include running VMs
+conditional_groups:
+  running: powerstate == 'running'
+
+# Use a clean hostname (the VM name) instead of the long default
+plain_host_names: true

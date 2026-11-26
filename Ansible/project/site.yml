@@ -1,0 +1,31 @@
+---
+# ===========================================================================
+# Main playbook — three plays, one per tier.
+# Run: ansible-playbook -i azure_rm.yml site.yml --ask-vault-pass
+# ===========================================================================
+
+# PLAY 1: Baseline config on ALL hosts (uses the 'common' role)
+- name: Baseline configuration for all servers
+  hosts: all
+  become: true
+  vars_files:
+    - vars/secrets.yml          # vault-encrypted
+  roles:
+    - common
+
+# PLAY 2: Web servers (uses the 'webserver' role)
+- name: Configure web servers
+  hosts: tag_role_web
+  become: true
+  roles:
+    - role: webserver
+      vars:
+        env: production
+
+# PLAY 3: Load balancer (uses the 'loadbalancer' role)
+# Runs last so the web nodes are already up.
+- name: Configure the load balancer
+  hosts: tag_role_lb
+  become: true
+  roles:
+    - loadbalancer

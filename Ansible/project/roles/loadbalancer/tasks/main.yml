@@ -1,0 +1,34 @@
+---
+# Configures nginx as a round-robin reverse proxy over the web nodes.
+# Demonstrates using inventory groups + hostvars inside a template.
+
+- name: Install nginx
+  apt:
+    name: nginx
+    state: present
+    update_cache: true
+
+- name: Remove default site to avoid conflicts
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Deploy load balancer config
+  template:
+    src: lb.conf.j2
+    dest: /etc/nginx/sites-available/lb.conf
+    mode: '0644'
+  notify: Restart nginx
+
+- name: Enable the load balancer site
+  file:
+    src: /etc/nginx/sites-available/lb.conf
+    dest: /etc/nginx/sites-enabled/lb.conf
+    state: link
+  notify: Restart nginx
+
+- name: Ensure nginx is running and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: true
